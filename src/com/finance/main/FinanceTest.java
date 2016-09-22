@@ -11,11 +11,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-
-
+import java.util.*;
+import javax.mail.*;
+import javax.mail.internet.*;
+import javax.activation.*;
 
 import java.util.Map;
 
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -83,9 +86,50 @@ public class FinanceTest {
 		return Jsoup.parse(shortVal.toString()).text();
 	}
 	
+	public void sendEmail() {
+		      // Get system properties
+		      Properties properties = System.getProperties();
+		      final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
+
+		      // Setup mail server
+		      properties.setProperty("mail.smtp.host", "smtp.gmail.com");
+		      properties.setProperty("mail.smtp.socketFactory.class", SSL_FACTORY);
+		      properties.setProperty("mail.smtp.socketFactory.fallback", "false");
+		      properties.setProperty("mail.smtp.port", "465");
+		      properties.setProperty("mail.smtp.socketFactory.port", "465");
+		      properties.put("mail.smtp.auth", "true");
+		      properties.put("mail.debug", "true");
+		      properties.put("mail.store.protocol", "pop3");
+		      properties.put("mail.transport.protocol", "gsmtp");
+
+		      final String username = "nehadm@gmail.com";
+		      final String password = "";
+		      
+		      try{
+		    	     Session session = Session.getDefaultInstance(properties, 
+		    	                          new Authenticator(){
+		    	                             protected PasswordAuthentication getPasswordAuthentication() {
+		    	                                return new PasswordAuthentication(username, password);
+		    	                             }});
+
+		    	   // -- Create a new message --
+		    	     Message msg = new MimeMessage(session);
+
+		    	  // -- Set the FROM and TO fields --
+		    	     msg.setFrom(new InternetAddress("nehadm@gmail.com"));
+		    	     msg.setRecipients(Message.RecipientType.TO, 
+		    	                      InternetAddress.parse("prasaddd123@gmail.com",false));
+		    	     msg.setSubject("Hello");
+		    	     msg.setText("How are you? I sent this message using a java program");
+		    	     msg.setSentDate(new Date());
+		    	     Transport.send(msg);
+		    	     System.out.println("Message sent.");
+		    	  }catch (MessagingException e){ System.out.println("Erreur d'envoi, cause: " + e);}
+	}
+		   
 	public static void main(String[] args) throws IOException {		
 		FinanceTest ft = new FinanceTest();
-		String ticker = "dis";
+		String ticker = "seff";
 		//System.out.println(ft.getATR(ticker));
 		System.out.println("**************************************");
 		//ft.getStockTickers();
@@ -102,13 +146,23 @@ public class FinanceTest {
 //		//Node node = companyName.html(html)
 //		System.out.println(Jsoup.parse(companyName.toString()).text());
 //		
-		Document doc2 = Jsoup.connect("http://finviz.com/quote.ashx?t="+ticker).get();
-	    Element earningscall = doc2.getElementsMatchingOwnText("Earnings").first();
-		Node atrValue = earningscall.nextElementSibling().childNode(0);
-
-		
-		System.out.println(Jsoup.parse(atrValue.toString()).text());
-//		
+		String errorText = "";
+		try {
+			Document doc2 = Jsoup.connect("http://finviz.com/quote.ashx?t="+ticker).get();
+		    Element earningscall = doc2.getElementsMatchingOwnText("Earnings").first();
+			Node atrValue = earningscall.nextElementSibling().childNode(0);
+	
+			
+			
+			System.out.println(Jsoup.parse(atrValue.toString()).text());
+	//		
+			
+			Element chartImage = doc2.getElementById("chart0");
+			System.out.println(chartImage);
+		} catch(IOException hse) {
+			errorText = "not found";
+			System.out.println(errorText);
+		}
 //		//Double db = Double.parseDouble(Jsoup.parse(lastPrice.toString()).text());
 //		Document dividendDataDoc = Jsoup.connect("https://dividata.com/stock/DIS").get();
 //		Element divYieldElement = dividendDataDoc.getElementsMatchingOwnText("Dividend Yield").get(1);
@@ -145,6 +199,7 @@ public class FinanceTest {
 //			e.printStackTrace();
 //		}
 		
+		//ft.sendEmail();
 	}
 
 }

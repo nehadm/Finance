@@ -1,1 +1,6 @@
-.gray {	color : #2D2A2A; }
+@CHARSET "ISO-8859-1";
+
+.red {
+	text-color: red;
+	
+}

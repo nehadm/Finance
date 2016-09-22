@@ -56,8 +56,7 @@ public class AngularJsServlet extends HttpServlet {
             
             IFinanceService finServ = new FinanceServiceImpl();
             StockData finData = finServ.getFinDataForSymbol(tickerSymbol);
-            
-            
+
             String json = new Gson().toJson(finData);
             System.out.println("finance data json:"+json);
             response.setContentType("application/json");

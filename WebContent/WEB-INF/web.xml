@@ -1,6 +1,6 @@
 <web-app>
   <welcome-file-list>
-    <welcome-file>finance3.jsp</welcome-file>
+    <welcome-file>login.jsp</welcome-file>
   </welcome-file-list>
   <servlet>
     <servlet-name>javaAngularJS</servlet-name>
@@ -10,6 +10,10 @@
     <servlet-name>marketIndexesServlet</servlet-name>
     <servlet-class>com.controller.MarketIndexesServlet</servlet-class>
   </servlet>
+    <servlet>
+    <servlet-name>autoCompleteServlet</servlet-name>
+    <servlet-class>com.controller.AutoCompleteServlet</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>javaAngularJS</servlet-name>
     <url-pattern>/javaAngularJS</url-pattern>
@@ -17,5 +21,9 @@
     <servlet-mapping>
     <servlet-name>marketIndexesServlet</servlet-name>
     <url-pattern>/marketIndexesServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>autoCompleteServlet</servlet-name>
+    <url-pattern>/autoCompleteServlet</url-pattern>
   </servlet-mapping>
 </web-app>
