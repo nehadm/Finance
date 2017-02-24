@@ -5,16 +5,28 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import com.data.StockData;
+import com.service.StockList;
 import com.util.DBUtil;
 
 public class AutoCompleteStocksDAC implements IAutoCompleteStockDAC {
 
 	@Override
 	public StringBuffer getStocksList() {
+		StockData sd;
+		List<StockData> list = new ArrayList<StockData>();
+//	    JSONObject responseDetailsJson = new JSONObject();
+//	    JSONArray jsonArray = new JSONArray();
+
 		Map<String, String> stocksList = new HashMap<String, String>();
 		StringBuffer sb = new StringBuffer("{\"finData\":[");
         // init connection object
@@ -37,16 +49,23 @@ public class AutoCompleteStocksDAC implements IAutoCompleteStockDAC {
                 connection = DriverManager.getConnection(DBUtil.DATABASE_URL, properties);
                 System.out.println(connection +"is the connection");
                 Statement stmt = connection.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT symbol, name FROM stock_info order by symbol desc limit 1500");
+                ResultSet rs = stmt.executeQuery("SELECT symbol, name FROM stock_info order by symbol limit 1000");
                 
                 while (rs.next()) {
                 	String symbol = rs.getString("symbol");
                 	sb.append("\""+symbol+"-");
                 	String companyName = rs.getString("name");
-                	
+
                     sb.append(companyName+"\"");
                     if(!rs.isLast()) sb.append(",");
                     stocksList.put(symbol,companyName);
+                    sd = new StockData(rs.getString("name"), rs.getString("symbol"));
+                    list.add(sd);
+//                    JSONObject formDetailsJson = new JSONObject();
+//
+//                    formDetailsJson.put(rs.getString("symbol"),rs.getString("name"));
+//                    jsonArray.add(formDetailsJson);
+
                 };
                 sb.append("]}");
                 System.out.println(sb.toString());
@@ -54,7 +73,8 @@ public class AutoCompleteStocksDAC implements IAutoCompleteStockDAC {
                 e.printStackTrace();
             }
         }
-        
+//        responseDetailsJson.put("finData", jsonArray);//Here you can see the data in json format
+
         if (connection != null) {
             try {
                 connection.close();
@@ -63,6 +83,7 @@ public class AutoCompleteStocksDAC implements IAutoCompleteStockDAC {
                 e.printStackTrace();
             }
         }
+        //return responseDetailsJson;
         return sb;
 	}
 	

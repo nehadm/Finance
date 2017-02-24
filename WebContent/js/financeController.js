@@ -21,11 +21,6 @@ app.factory('factoryReference', ['$http', '$q', function($http, $q) {
 			method: 'POST',
 			url: 'marketIndexesServlet'
     	});
-//		}).success(function (data) {
-//			$scope.indexes = data;
-//		}).error(function (data) {
-//			$scope.showTable = false;
-//		});
     	return marketData;
     };
 
@@ -40,10 +35,17 @@ app.controller("financeController", ['$scope', '$http', '$timeout', 'factoryRefe
     $scope.errorText = "";
     $scope.regex = '[a-zA-Z]*';
     $scope.date = new Date();
-
+    $scope.accountSize = 5000;
+    $scope.limit = 10;
     $scope.changeStyle = function() {
     	$('#tableAutoComplete').show();
     }
+    $('#buttonSearch').click(function (){
+    	console.log('button clicked');
+    	console.log($scope.selected);
+    	$scope.getStockData($scope.selected);
+    });
+
     $('#tickerSelected').hide();
     $('#tickerInput').keypress(function(){
     	console.log('key pressed');
@@ -59,9 +61,6 @@ app.controller("financeController", ['$scope', '$http', '$timeout', 'factoryRefe
    		console.log(response);
    		var res =angular.fromJson(response.finData);
         $scope.stockList = res;
-        
-        // Init displayedList
-        $scope.displayedStockList = stockList;
 
      });
     
@@ -82,11 +81,6 @@ app.controller("financeController", ['$scope', '$http', '$timeout', 'factoryRefe
     		console.log("getStockData.success()");
     		console.log(result);
     		$scope.finance = result.data;
-//    		if($scope.finance.divData == null) {
-//    			$scope.classValue = "w3-third";
-//    		} else {
-//    			$scope.classValue = "w3-quarter";
-//    		}
     		$scope.showTable = true;
     		$('#spinner').hide();
         }, function(result) {

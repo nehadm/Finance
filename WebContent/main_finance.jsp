@@ -40,7 +40,7 @@
     <![endif]-->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
     <script src="js/financeController.js"></script>
     <script>
     // tooltip demo
@@ -49,6 +49,7 @@
         container: "body"
     });
     </script>
+        
 </head>
 
 <body>
@@ -58,7 +59,7 @@
         <!-- Navigation -->
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
-                <a class="navbar-brand" href="help_doc.html">Stock Analyzer</a>
+                <a class="navbar-brand" href="help_doc.html" style="font-size: 40px;">Stock Analyzer</a>
 <!--             	<ul class="nav navbar-top-links navbar-right"> -->
                     <div class="input-group custom-search-form" style="float:right; width: 25%; margin-left: 50%;padding-top: 7px;">
                     	<input type="text" class="form-control" placeholder="Search..." id="tickerInput" data-ng-model="selected" data-ng-pattern="regex" required="" data-ng-minlength="1" data-ng-maxlength="5">
@@ -69,55 +70,54 @@
                 		</span>
                 		
                     	<select id="tickerSelected" class="form-control" data-ng-model="eg" data-ng-change="getStockData(eg.split('-')[0])">
-                        	<option data-ng-repeat="x in stockList | filter: selected">
+  							<option data-ng-repeat="x in stockList | filter: selected">
                             	{{ x }}
                         	</option>
                     	</select>
 					</div>
 <!--             	</ul> -->
             <br/>
-            <span style="float:left; clear: left; padding-left: 13px;">{{date | date:'MMM dd yyyy, hh:mm:ss a'}}</span>
+            <span class="clockLabel navbar-default">{{date | date:'MMM dd yyyy, hh:mm:ss a'}}</span>
 			<span data-ng-show="{{date}}"></span>
 
 			</div>
 		</nav>
 
-            <div>
+            <div class="indexStrip"> 
 	            <a style="text-decoration: none !important;" class="tooltip-demo" data-ng-repeat="x in marketIndices" id="news_{{x.symbol}}" 
 	            target="_blank" data-toggle="tooltip" data-placement="left" title="{{x.indexName}}">
 					{{ x.symbol }} ({{ x.indexLastValue }}) ({{ x.percentChange }} %)&nbsp;
 			    	<img data-ng-show="x.percentChange < 0" src="images/270px-Red_triangle.svg.png" title="Bearish" width="16"/>
 			    	<img data-ng-show="x.percentChange > 0" src="images/green-triangle.gif" title="Bullish" width="16"/>&nbsp;&nbsp;
 	            </a>
-		    	<div>&nbsp; &nbsp; &nbsp;</div>
 			</div>
-			<hr/>
-            <div class="navbar-default sidebar" role="navigation">
-                <div class="sidebar-nav navbar-collapse">
-                    <ul class="nav" id="side-menu">
+			<hr style="border: 5; margin: 0px;border-top: 1px solid #eee;"/>
+<!--             <div class="navbar-default sidebar" role="navigation" style="margin-top: 0px;"> -->
+<!--                 <div class="sidebar-nav navbar-collapse"> -->
+<!--                     <ul class="nav" id="side-menu"> -->
 
-                        <li>
-                            <a href="tables.html"><i class="fa fa-table fa-fw"></i> Symbol Check</a>
-                        </li>
-                        <li>
-                            <a href="forms.html"><i class="fa fa-edit fa-fw"></i> ETFs</a>
-                        </li>
-                        <li>
-                            <a href="tables.html"><i class="fa fa-table fa-fw"></i> Currencies</a>
-                        </li>
-                        <li>
-                            <a href="trade_plan.jsp"><i class="fa fa-edit fa-fw"></i> Trade Plan</a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- /.sidebar-collapse -->
-            </div>
+<!--                         <li> -->
+<!--                             <a href="tables.html"><i class="fa fa-table fa-fw"></i> Symbol Check</a> -->
+<!--                         </li> -->
+<!--                         <li> -->
+<!--                             <a href="forms.html"><i class="fa fa-edit fa-fw"></i> ETFs</a> -->
+<!--                         </li> -->
+<!--                         <li> -->
+<!--                             <a href="tables.html"><i class="fa fa-table fa-fw"></i> Currencies</a> -->
+<!--                         </li> -->
+<!--                         <li> -->
+<!--                             <a href="trade_plan.jsp"><i class="fa fa-edit fa-fw"></i> Trade Plan</a> -->
+<!--                         </li> -->
+<!--                     </ul> -->
+<!--                 </div> -->
+<!--                 /.sidebar-collapse -->
+<!--             </div> -->
             <!-- /.navbar-static-side -->
 
         <br/>
         <br/>
         
-        <div id="page-wrapper">
+        <div id="page-wrapper" style="margin: -40px 0 0 0;">
             <div class="row">
                 <div class="col-lg-12" data-ng-show="showTable && finance != null">
                     <h2>{{finance.companyName}}, {{finance.ticker}} ({{finance.stockPrice | currency}})</h2>
@@ -130,9 +130,9 @@
                 <!-- /.col-lg-12 -->
             </div>
             
-            <img id="spinner" src="images/spinner.gif" style="display:none"></img>
-            <div class="row" data-ng-show="showTable && finance != null">
-                <div class="col-lg-4">
+            <img id="spinner" src="images/spinner.gif" style="display:none"></img>            
+            <div style="float:left; width: 20%;" class="row" data-ng-show="showTable && finance != null">
+                <div>
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             General Data
@@ -149,24 +149,9 @@
                 </div>
 <!--             </div> -->
 <!--             <div class="row" data-ng-show="showTable && finance != null"> -->
-                <div class="col-lg-4" data-ng-show="showTable && finance.divData != null">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            Dividend Data
-                        </div>
-                        <div class="panel-body">
-                            <p>Ex Div Date : {{ finance.divData.exDivDate | date: 'MMM dd yyyy' }}</p>
-                            <p>Pay Date : {{ finance.divData.payDate }}</p>
-                            <p>Annual Dividend : {{ finance.divData.annualDividend | currency }}</p>
-                            <p>Div Yield(%) : {{ finance.divData.divYield }}</p>
-                            <p>Years Paying : {{ finance.divData.yearsPaying }}</p>
-                        </div>
-                    </div>
-                    <!-- /.col-lg-4 -->
-                </div>
 <!--             </div> -->
 <!--             <div class="row" data-ng-show="showTable && finance != null"> -->
-                <div class="col-lg-4" data-ng-show="showTable && finance.fundaData != null">
+                <div data-ng-show="showTable && finance.fundaData != null">
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             Fundamental Data
@@ -183,7 +168,7 @@
                 </div>
 <!-- 			</div> -->
 <!-- 			 <div class="row" data-ng-show="showTable && finance != null"> -->
-                <div class="col-lg-4">
+                <div>
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             Performance Data
@@ -214,40 +199,98 @@
                     </div>
                     <!-- /.col-lg-4 -->
                 </div>
-             </div>
-             <div class="row" data-ng-show="showTable && finance != null">
-                <div class="col-lg-4" data-ng-show="showTable && finance != null">
+                <div data-ng-show="showTable && finance.divData != null">
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            Trade Plan
+                            Dividend Data
                         </div>
                         <div class="panel-body">
-                        	Enter your account size
-<!--                                     	 <th>2% of your account</th> -->
-<!--                                    		 <th>5% of your account</th> -->
-<!--                                     	 <th>10% of your account</th> -->
-<!--                                     	 <th>25% of your account</th>                                         -->
-                        	<input type="text" data-ng-model="accountSize" data-ng-show="showTable"/><br/>
-                        	<select data-ng-model="accountSizeOption">
-  								<option value="2">2%</option>
-  								<option value="3">3%</option>
-  								<option value="5">5%</option>
-  								<option value="10">10%</option>
-  								<option value="20">20%</option>
-							</select>
-  							<p>For {{accountSizeOption}} , the amount of money from your total account that should be invested is :
-  							{{accountSizeOption/100 * accountSize}}</p>
-  							<br/>
-  							<p>2N = {{ finance.atr * 2}}</p> 
-  							<p>3N = {{ finance.atr * 3}}</p>
-  							<p>5N = {{ finance.atr * 5}}</p>
-  							
-  							
+                            <p>Ex Div Date : {{ finance.divData.exDivDate}}</p>
+                            <p>Pay Date : {{ finance.divData.payDate}}</p>
+                            <p>Annual Dividend : {{ finance.divData.annualDividend | currency }}</p>
+                            <p>Div Yield(%) : {{ finance.divData.divYield }}</p>
+                            <p>Years Paying : {{ finance.divData.yearsPaying }}</p>
                         </div>
                     </div>
                     <!-- /.col-lg-4 -->
                 </div>
-				</div>
+                
+             </div>
+             <div style="width:	80%;" data-ng-show="showTable && finance != null">
+                  <div class="panel panel-info" style="width: 70%; height: 300px; margin-left: 25%">
+                      <div class="panel-heading">
+                          Evaluate trades
+                      </div>
+                      <div class="panel-body">
+                      	Enter your account size
+                      	<input type="text" data-ng-model="accountSize" data-ng-show="showTable"/><br/>
+                      	<select data-ng-model="accountSizeOption">
+								<option value="2" selected="selected">2%</option>
+								<option value="3">3%</option>
+								<option value="5">5%</option>
+								<option value="10">10%</option>
+								<option value="20">20%</option>
+					</select>
+							<p>For {{accountSizeOption}} %, the amount of money from your total account that should be invested is :
+							{{accountSizeOption/100 * accountSize}}</p>
+							<br/>
+							<p>2N = {{ finance.atr * 2}}</p> 
+							<p>3N = {{ finance.atr * 3}}</p>
+							<p>5N = {{ finance.atr * 5}}</p>
+                      </div>
+                  </div>
+                  <div class="panel panel-info" style="width: 70%; height: 900px; margin-left: 25%">
+                      <div class="panel-heading">
+                          Chart for {{ finance.ticker | uppercase}} (Provided by Trading View)
+                      </div>
+                      <div class="panel-body">
+					<!-- TradingView Widget BEGIN -->
+					<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+					<script type="text/javascript">
+					new TradingView.widget({
+						"width": 1000,
+						"height": 825,
+						"symbol": "AAPL",
+						"interval": "D",
+						"timezone": "exchange",
+						"theme": "White",
+						"style": "1",
+						"toolbar_bg": "#f1f3f6",
+						"withdateranges": true,
+						"hide_side_toolbar": false,
+						"allow_symbol_change": false,
+						"save_image": true,
+						"hideideas": true,
+						"studies": [ "StochasticRSI@tv-basicstudies",
+						"MASimple@tv-basicstudies" ],
+						"show_popup_button": false
+					});
+					</script>
+					<!-- TradingView Widget END -->
+				  </div>                  
+             </div>
+<!--              <div class="panel panel-info" style="float: right"> -->
+<!--                 <div class="panel-heading"> -->
+<!--                     <p>General Watchlist</p> -->
+<!--                     <p>DOW 30</p> -->
+<!--                 </div> -->
+<!--                 <div class="panel-body"> -->
+<!--                     <a style="float: left;">AAPL</a> -->
+<!--                     <a style="clear:left;float: left;">DIS</a> -->
+<!--                     <a style="clear:left;float: left;">INTC</a> -->
+<!--                     <a style="clear:left;float: left;">MMM</a> -->
+<!--        	            <a style="clear:left;float: left;">MSFT</a> -->
+<!--                     <a style="clear:left;float: left;">PFE</a> -->
+<!--                     <a style="clear:left;float: left;">VZ</a> -->
+<!--                     <a style="clear:left;float: left;">CVX</a> -->
+<!--                     <a style="clear:left;float: left;">NKE</a> -->
+<!--                     <a style="clear:left;float: left;">JNJ</a> -->
+<!--                     <a style="clear:left;float: left;">XOM</a> -->
+<!--                     <a style="clear:left;float: left;">CVX</a>	                     -->
+<!--                 </div> -->
+<!-- 	         </div> -->
+             
+             </div>
             </div>
         </div>
 </body>

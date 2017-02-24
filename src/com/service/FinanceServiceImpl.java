@@ -111,29 +111,30 @@ public class FinanceServiceImpl implements IFinanceService {
 				dividendDataDoc = Jsoup.connect("https://dividata.com/stock/"+tickerSymbol).get();
 				Element exDivDateElement = dividendDataDoc.getElementsMatchingOwnText("Ex-Dividend Date").first();
 				Node exDivDate = exDivDateElement.nextElementSibling().childNode(0);
+				System.out.println(exDivDate);
 				// = (Jsoup.parse(exDivDate.toString()).text().equals("N/A")) ? false : true;
 				//hasDividend = finData.getDividend() == null ? false : true;
-
-				Date exDivDateFormat = (new SimpleDateFormat("MM/dd/yy").parse(Jsoup.parse(exDivDate.toString()).text()));
 				
+				String exDivDateFormat = exDivDate.toString();
+
 				Element payDateElement = dividendDataDoc.getElementsMatchingOwnText("Pay Date").first();
 				Node payDateNode = payDateElement.nextElementSibling().childNode(0);
-				Date payDateFormat = (new SimpleDateFormat("MM/dd/yy").parse(Jsoup.parse(payDateNode.toString()).text()));
-				
+				String payDateFormat = payDateNode.toString();
+
 				Element divYieldElement = dividendDataDoc.getElementsMatchingOwnText("Dividend Yield").get(1);
 				Node divYieldNode = divYieldElement.nextElementSibling().childNode(0);
 				String divYieldString = Jsoup.parse(divYieldNode.toString()).text().replace("%", "");
 				Double divYield = Double.parseDouble(divYieldString.equals("N/A") ? "0" : divYieldString);
-				
+
 				Element annualDivElement = dividendDataDoc.getElementsMatchingOwnText("Annual Dividend").first();
 				Node annualDivNode = annualDivElement.nextElementSibling().childNode(0);
 				String annualDivString = Jsoup.parse(annualDivNode.toString()).text().replace("$", "");
 				Double annualDiv = Double.parseDouble(annualDivString.equals("N/A") ? "0" : annualDivString);				
 				Element yearsPaying = dividendDataDoc.getElementsMatchingOwnText("Years Paying").first();
 				Node yearsPayingNode = yearsPaying.nextElementSibling().childNode(0);
-				int yearsPayingDiv = Integer.parseInt((Jsoup.parse(yearsPayingNode.toString()).text()).replace("$", ""));
-				
-				
+				int yearsPayingDiv = Integer.parseInt((Jsoup.parse(yearsPayingNode.toString()).text()).replace("$", "").equals("N/A") ? "0" : 
+					(Jsoup.parse(yearsPayingNode.toString()).text()).replace("$", ""));
+
 				DividendData divData = new DividendData(exDivDateFormat, payDateFormat, divYield, annualDiv, yearsPayingDiv);
 				finData.setDivData(divData);
 			} else {

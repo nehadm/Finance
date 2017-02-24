@@ -23,7 +23,12 @@ public class StockData {
 	public StockData() {
 	}
 
-	
+	public StockData(String companyName, String ticker) {
+		super();
+		this.companyName = companyName;
+		this.ticker = ticker;
+	}
+
 	public StockData(Double atr, Double stockPrice, Double prevClose, Double shortFloat, String ticker, Double dividend,
 			String companyName, String companyBriefing, String industry, String sector, Double targetPrice,
 			String stockExchange, DividendData divData, String earningsCall, String earningsStats,

@@ -4,3 +4,11 @@
 	text-color: red;
 	
 }
+
+.indexStrip {
+	padding: 10px 15px; font-size: smaller;
+}
+
+.clockLabel {
+	float:left; clear: left; padding: 0px 0px 5px 15px;
+}
