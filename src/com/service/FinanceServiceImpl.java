@@ -27,7 +27,7 @@ public class FinanceServiceImpl implements IFinanceService {
 
 	@Override
 	public StockData getFinDataForSymbol(String tickerSymbol) {
-		
+		System.out.println("inside getFinDataForSymbol method");
 		MarketWatchService mwService;
 		FinvizService fvService;
 		DividataService ddService;
