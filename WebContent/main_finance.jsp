@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"  data-ng-app="myApp" data-ng-controller="financeController" data-ng-init="showTable=false;getStockData('AAPL')">
+<html lang="en"  data-ng-app="myApp" data-ng-controller="financeController" data-ng-init="showTable=false;getStockData('FCX')">
 
 <head>
 
@@ -13,6 +13,9 @@
 
     <!-- Bootstrap Core CSS -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap less CSS -->
+    <link href="bower_components/bootstrap/less/component-animations.less" rel="stylesheet">
 
     <!-- MetisMenu CSS -->
     <link href="bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
@@ -29,31 +32,31 @@
     <!-- Morris Charts CSS -->
     <link href="bower_components/morrisjs/morris.css" rel="stylesheet">
 
+	<link href="dist/css/sb-admin-2.css" rel="stylesheet">
     <!-- Custom Fonts -->
     <link href="bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
     <script src="js/financeController.js"></script>
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="bower_components/metisMenu/dist/metisMenu.min.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="dist/js/sb-admin-2.js"></script>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script>
     // tooltip demo
     $('.tooltip-demo').tooltip({
         selector: "[data-toggle=tooltip]",
         container: "body"
     });
-    </script>
-        
+    </script>        
 </head>
 
 <body>
-
     <div id="wrapper">
 
         <!-- Navigation -->
@@ -84,6 +87,7 @@
 		</nav>
 
             <div class="indexStrip"> 
+            	<span>Major market indexes today</span><br/>
 	            <a style="text-decoration: none !important;" class="tooltip-demo" data-ng-repeat="x in marketIndices" id="news_{{x.symbol}}" 
 	            target="_blank" data-toggle="tooltip" data-placement="left" title="{{x.indexName}}">
 					{{ x.symbol }} ({{ x.indexLastValue }}) ({{ x.percentChange }} %)&nbsp;
@@ -117,7 +121,7 @@
         <br/>
         <br/>
         
-        <div id="page-wrapper" style="margin: -40px 0 0 0;">
+        <div id="page-wrapper" style="width: 100%; margin: -40px 0 0 0; height: auto;overflow: auto;">
             <div class="row">
                 <div class="col-lg-12" data-ng-show="showTable && finance != null">
                     <h2>{{finance.companyName}}, {{finance.ticker}} ({{finance.stockPrice | currency}})</h2>
@@ -130,7 +134,7 @@
                 <!-- /.col-lg-12 -->
             </div>
             
-            <img id="spinner" src="images/spinner.gif" style="display:none"></img>            
+            <img id="spinner" src="images/spinner.gif" class="spinner" style="display:none"></img>            
             <div style="float:left; width: 20%;" class="row" data-ng-show="showTable && finance != null">
                 <div>
                     <div class="panel panel-info">
@@ -138,7 +142,7 @@
                             General Data
                         </div>
                         <div class="panel-body">
-                            <p>Ticker : {{ finance.ticker | uppercase}}</p>
+<!--                             <p>Ticker : {{ finance.ticker | uppercase}}</p> -->
                             <p>ATR(N) : {{ finance.atr }}</p>
                             <p>Short Float : {{ finance.shortFloat }} %</p>
                             <p>Target Price : {{ finance.targetPrice |currency}}</p>
@@ -216,10 +220,10 @@
                 </div>
                 
              </div>
-             <div style="width:	80%;" data-ng-show="showTable && finance != null">
-                  <div class="panel panel-info" style="width: 70%; height: 300px; margin-left: 25%">
+             <div style="width:	70%; float: left;" data-ng-show="showTable && finance != null">
+                  <div class="panel panel-info" style="height: 300px; margin-left: 3%">
                       <div class="panel-heading">
-                          Evaluate trades
+                          Evaluate trades (The turtle way!)
                       </div>
                       <div class="panel-body">
                       	Enter your account size
@@ -239,58 +243,79 @@
 							<p>5N = {{ finance.atr * 5}}</p>
                       </div>
                   </div>
-                  <div class="panel panel-info" style="width: 70%; height: 900px; margin-left: 25%">
+                  <div class="panel panel-info" style="height: 900px; margin-left: 3%">
                       <div class="panel-heading">
                           Chart for {{ finance.ticker | uppercase}} (Provided by Trading View)
                       </div>
-                      <div class="panel-body">
-					<!-- TradingView Widget BEGIN -->
-					<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-					<script type="text/javascript">
-					new TradingView.widget({
-						"width": 1000,
-						"height": 825,
-						"symbol": "AAPL",
-						"interval": "D",
-						"timezone": "exchange",
-						"theme": "White",
-						"style": "1",
-						"toolbar_bg": "#f1f3f6",
-						"withdateranges": true,
-						"hide_side_toolbar": false,
-						"allow_symbol_change": false,
-						"save_image": true,
-						"hideideas": true,
-						"studies": [ "StochasticRSI@tv-basicstudies",
-						"MASimple@tv-basicstudies" ],
-						"show_popup_button": false
-					});
-					</script>
-					<!-- TradingView Widget END -->
-				  </div>                  
+                      <p style="display:none" id="hiddenTicker">{{ finance.ticker }} </p>
+                      <div id="tradingWidget" class="panel-body ng-cloak">
+						<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+						<script type="text/javascript"> 
+ 							alert("abc test" + $("#test").text());
+							new TradingView.widget({
+ 								"width": "100%",
+ 								"height": 825,
+ 								"symbol": angular.element(document.querySelector('[data-ng-controller="financeController"]')).scope().symbol,
+ 								"interval": "D",
+ 								"timezone": "exchange",
+ 								"theme": "White",
+ 								"style": "1",
+ 								"toolbar_bg": "#f1f3f6",
+ 								"withdateranges": true,
+ 								"hide_side_toolbar": false,
+ 								"allow_symbol_change": false,
+ 								"save_image": true,
+ 								"hideideas": true,
+ 								"studies": [ "StochasticRSI@tv-basicstudies",
+ 								"MASimple@tv-basicstudies" ],
+ 								"show_popup_button": false
+ 							});
+ 						</script>
+				  	</div>                  
+             	</div>
              </div>
-<!--              <div class="panel panel-info" style="float: right"> -->
-<!--                 <div class="panel-heading"> -->
-<!--                     <p>General Watchlist</p> -->
-<!--                     <p>DOW 30</p> -->
-<!--                 </div> -->
-<!--                 <div class="panel-body"> -->
-<!--                     <a style="float: left;">AAPL</a> -->
-<!--                     <a style="clear:left;float: left;">DIS</a> -->
-<!--                     <a style="clear:left;float: left;">INTC</a> -->
-<!--                     <a style="clear:left;float: left;">MMM</a> -->
-<!--        	            <a style="clear:left;float: left;">MSFT</a> -->
-<!--                     <a style="clear:left;float: left;">PFE</a> -->
-<!--                     <a style="clear:left;float: left;">VZ</a> -->
-<!--                     <a style="clear:left;float: left;">CVX</a> -->
-<!--                     <a style="clear:left;float: left;">NKE</a> -->
-<!--                     <a style="clear:left;float: left;">JNJ</a> -->
-<!--                     <a style="clear:left;float: left;">XOM</a> -->
-<!--                     <a style="clear:left;float: left;">CVX</a>	                     -->
-<!--                 </div> -->
-<!-- 	         </div> -->
-             
-             </div>
+<!--              <div > -->
+             <div style="width:	10%; margin-left: 1%; float: left;" class="panel panel-info" data-ng-show="showTable">
+                <div class="panel-heading">
+                    Watchlists
+                </div>
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                          <li>
+                              <a href="#">Dow 30 <span class="fa arrow"></span></a>
+                              <ul class="nav nav-third-level">
+                                  <li>
+                                  	<a style="text-decoration: none !important; clear:left;float: left; cursor: pointer" data-ng-repeat="x in dow30List" id="dow30_{{x}}" 
+       								 target="_blank" data-placement="left" title="{{x}}" data-ng-click="getStockData('{{ x }}')">
+										{{ x }}
+        						</a>
+                                  </li>
+                              </ul>
+                          </li>
+                          <li>
+                              <a href="#">SPX 100<span class="fa arrow"></span></a>
+                              <ul class="nav nav-third-level">
+                                  <li>
+                                      <a style="text-decoration: none !important; clear:left;float: left; cursor: pointer" data-ng-repeat="x in spx100List" id="spx100_{{x}}" 
+      						    target="_blank" data-placement="left" title="{{ x | uppercase }}" data-ng-click="getStockData('{{ x }}')">
+										{{ x }}
+        						</a>
+                                  </li>
+                              </ul>
+                          </li>
+                      </ul>
+                 </div>       
+                <div class="panel-body">
+<!-- 	                <a style="text-decoration: none !important; clear:left;float: left; cursor: pointer" data-ng-repeat="x in dow30List" id="dow30_{{x}}"  -->
+<!-- 		            target="_blank" data-placement="left" title="{{x}}" data-ng-click="getStockData('{{ x }}')"> -->
+<!-- 						{{ x }} -->
+<!-- 		            </a> -->
+<!-- 		            <a style="text-decoration: none !important; clear:left;float: left; cursor: pointer" data-ng-repeat="x in spx100List" id="spx100_{{x}}"  -->
+<!-- 		            target="_blank" data-placement="left" title="{{ x | uppercase }}" data-ng-click="getStockData('{{ x }}')"> -->
+<!-- 						{{ x }} -->
+<!-- 		            </a> -->
+                </div>
+	         </div>
             </div>
         </div>
 </body>

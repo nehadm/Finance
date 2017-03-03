@@ -24,14 +24,24 @@ app.factory('factoryReference', ['$http', '$q', function($http, $q) {
     	return marketData;
     };
 
+    dataFactory.getDowWatchlist = function() {
+    	var dow30list = $http.get('resources/dow30.json');
+    	return dow30list;
+    }
+
+    dataFactory.getSpx100Watchlist = function() {
+    	var spx100List = $http.get('resources/spx100.json');
+    	return spx100List;
+    }
+
     return dataFactory;
 }]);
 
 app.controller("financeController", ['$scope', '$http', '$timeout', 'factoryReference',
 	                                        function($scope, $http, $timeout, factoryReference) {
 
-	var fin = {ticker:"aapl"};
-    $scope.finance = {ticker:"aapl"};
+	var fin = {ticker:"fcx"};
+    $scope.finance = {ticker:"fcx"};
     $scope.errorText = "";
     $scope.regex = '[a-zA-Z]*';
     $scope.date = new Date();
@@ -73,6 +83,16 @@ app.controller("financeController", ['$scope', '$http', '$timeout', 'factoryRefe
     	console.log("getMarketIndices():error");
     });
     
+    factoryReference.getDowWatchlist().then(function(result){
+    	console.log("getDowWatchList()");
+    	$scope.dow30List = result.data.dow30;
+    });
+
+    factoryReference.getSpx100Watchlist().then(function(result){
+    	console.log("getSpx100Watchlist()");
+    	$scope.spx100List = result.data.spx100;
+    });
+
     $scope.getStockData = function(tckr) {
     	$('#spinner').show();
     	$scope.showTable = false;
@@ -81,6 +101,7 @@ app.controller("financeController", ['$scope', '$http', '$timeout', 'factoryRefe
     		console.log("getStockData.success()");
     		console.log(result);
     		$scope.finance = result.data;
+    		$scope.symbol = $scope.finance.ticker;
     		$scope.showTable = true;
     		$('#spinner').hide();
         }, function(result) {
@@ -91,5 +112,4 @@ app.controller("financeController", ['$scope', '$http', '$timeout', 'factoryRefe
     };
 
 }]);
-
 

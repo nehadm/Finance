@@ -6,9 +6,25 @@
 }
 
 .indexStrip {
-	padding: 10px 15px; font-size: smaller;
+	padding: 10px 15px; font-size: small;
 }
 
 .clockLabel {
 	float:left; clear: left; padding: 0px 0px 5px 15px;
+}
+
+.indexStrip > span {
+	font-size: 18px;
+}
+.indexStrip > a {
+	font-size: 18px;
+	padding-right: 50px;
+}
+
+.spinner {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-top: -50px;
+	margin-left: -100px;
 }

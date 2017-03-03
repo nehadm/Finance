@@ -243,6 +243,7 @@ public class FinanceServiceImpl implements IFinanceService {
 		
 		Document indexes;
 		ArrayList<IndexData> indexesList = new ArrayList<IndexData>();
+//		ArrayList<IndexData> mostRelevantIndexList;
 		
 		try {
 			indexes = Jsoup.connect("http://bigcharts.marketwatch.com/markets/indexes.asp").get();
@@ -256,9 +257,8 @@ public class FinanceServiceImpl implements IFinanceService {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-//		for (IndexData index : indexesList) {
-//			if(!index.getSymbol().equalsIgnoreCase("SPX") || )
-//		}
+
+
 		return indexesList;
 	}
 	
@@ -266,15 +266,19 @@ public class FinanceServiceImpl implements IFinanceService {
 		for(Element field : fields) {
 	    	IndexData data = new IndexData();
 	    	Node index = field.childNode(0);
-	    	Node indexName = index.parentNode().childNode(1);
 	    	Node symbol = index.parentNode().childNode(3);
+	    	String symbolString = Jsoup.parse(symbol.toString()).text();
+	    	Node indexName = index.parentNode().childNode(1);
 	    	Node value = index.parentNode().childNode(7);
 	    	Node percentChange = index.parentNode().childNode(11);
-	    	data.setIndexName(Jsoup.parse(indexName.toString()).text());
-	    	data.setIndexLastValue(Jsoup.parse(value.toString()).text());
-	    	data.setSymbol(Jsoup.parse(symbol.toString()).text());
-	    	data.setPercentChange(Double.parseDouble(Jsoup.parse(percentChange.toString().replace("%", "")).text()));
-	    	indexesList.add(data);
+	    	if((symbolString.equalsIgnoreCase("SPX") || symbolString.equalsIgnoreCase("DJIA") || 
+	    			symbolString.equalsIgnoreCase("NDX") || symbolString.equalsIgnoreCase("RUT"))) {
+	    		data.setIndexName(Jsoup.parse(indexName.toString()).text());
+	    		data.setIndexLastValue(Jsoup.parse(value.toString()).text());
+	    		data.setSymbol(symbolString);
+	    		data.setPercentChange(Double.parseDouble(Jsoup.parse(percentChange.toString().replace("%", "")).text()));
+	    		indexesList.add(data);
+	    	}
 	    }
 		return indexesList;
 	}
