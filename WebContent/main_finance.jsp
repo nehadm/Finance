@@ -9,8 +9,6 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="SHORTCUT ICON" href="images/fin.png">
-    <title>{{finance.ticker}} - Welcome to your Stock Analyzer!</title>
-
     <!-- Bootstrap Core CSS -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -36,7 +34,8 @@
     <!-- Custom Fonts -->
     <link href="bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
-
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
     <script src="js/financeController.js"></script>
@@ -53,78 +52,73 @@
         selector: "[data-toggle=tooltip]",
         container: "body"
     });
-    </script>        
+    </script>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <title>{{finance.ticker | uppercase}} - Welcome to Trade Analyzer!</title>
 </head>
 
 <body>
     <div id="wrapper">
-
         <!-- Navigation -->
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0px;">
             <div class="navbar-header">
-                <a class="navbar-brand" href="help_doc.html" style="font-size: 40px;">Stock Analyzer</a>
+                <a class="navbar-brand titleFont" href="help_doc.html">Trade Analyzer</a>
 <!--             	<ul class="nav navbar-top-links navbar-right"> -->
                     <div class="input-group custom-search-form" style="float:right; width: 25%; margin-left: 50%;padding-top: 7px;">
-                    	<input type="text" class="form-control" placeholder="Search..." id="tickerInput" data-ng-model="selected" data-ng-pattern="regex" required="" data-ng-minlength="1" data-ng-maxlength="5">
+                    	<input type="text" class="form-control" placeholder="Search for ticker or company name" id="tickerInput" data-ng-model="selected" required="required" data-ng-minlength="1" data-ng-maxlength="5">
                     	<span class="input-group-btn" >
-                        	<button class="btn btn-default" type="button" id="buttonSearch">
+                        	<button class="btn btn-default" type="button" id="buttonSearch" data-ng-click="getStockData($('#tickerInput'))">
                         		<i class="fa fa-search"></i>
                     		</button>
                 		</span>
-                		
-                    	<select id="tickerSelected" class="form-control" data-ng-model="eg" data-ng-change="getStockData(eg.split('-')[0])">
-  							<option data-ng-repeat="x in stockList | filter: selected">
-                            	{{ x }}
-                        	</option>
-                    	</select>
+<!--                     	<select id="tickerSelected" class="form-control" data-ng-model="eg" data-ng-change="getStockData(eg.split('-')[0])"> -->
+<!--   							<option data-ng-repeat="x in stockList | filter: selected"  > -->
+<!--                             	{{ x }} -->
+<!--                         	</option> -->
+<!--                     	</select> -->
+                        <div class="table-responsive">
+                            <table class="table table-hover autoCompleteSuggestionsTable" id="tickerSelected">
+                                <tbody>
+	                    			<tr data-ng-repeat="x in stockList | filter: selected" data-ng-click="getStockData(x.split('-')[0])">
+	                    			 	<td class="ticker"> {{x.split('-')[0]}} </td>
+	                    			 	<td class="companyName"> {{x.split('-')[1]}} </td>
+                    			 	</tr>
+                    			</tbody>
+                    		</table>
+                    	</div>
 					</div>
 <!--             	</ul> -->
             <br/>
-            <span class="clockLabel navbar-default">{{date | date:'MMM dd yyyy, hh:mm:ss a'}}</span>
-			<span data-ng-show="{{date}}"></span>
-
+<!--             <span class="clockLabel navbar-default">Local time: {{dateLocal | date:'MMM dd yyyy, hh:mm'}}</span> -->
+			<span class="clockLabel navbar-default">{{dateNY}}</span>
 			</div>
 		</nav>
 
-            <div class="indexStrip"> 
-            	<span>Major market indexes today</span><br/>
-	            <a style="text-decoration: none !important;" class="tooltip-demo" data-ng-repeat="x in marketIndices" id="news_{{x.symbol}}" 
-	            target="_blank" data-toggle="tooltip" data-placement="left" title="{{x.indexName}}">
-					{{ x.symbol }} ({{ x.indexLastValue }}) ({{ x.percentChange }} %)&nbsp;
-			    	<img data-ng-show="x.percentChange < 0" src="images/270px-Red_triangle.svg.png" title="Bearish" width="16"/>
-			    	<img data-ng-show="x.percentChange > 0" src="images/green-triangle.gif" title="Bullish" width="16"/>&nbsp;&nbsp;
+            <div class="indexStrip">
+<!--             	<span>Major market indexes today</span><br/> -->
+	            <a class="tooltip-demo"
+	            data-ng-repeat="x in marketIndices" id="news_{{x.symbol}}"
+	            target="_blank" data-toggle="tooltip" data-placement="left" title="{{x.indexName}}"
+	            data-ng-class="(x.percentChange < 0) ? 'marketIndexRed' : 'marketIndexGreen'">
+					{{ x.symbol }}
+					<span style="font-size:small;">({{ x.indexLastValue }}) ({{ x.percentChange }} %)&nbsp;</span>
+<%-- 			    	<img data-ng-show="x.percentChange < 0" src="images/270px-Red_triangle.svg.png" title="Bearish" width="16"/> --%>
+<!-- 			    	<img data-ng-show="x.percentChange > 0" src="images/green-triangle.gif" title="Bullish" width="16"/>&nbsp;&nbsp; -->
 	            </a>
 			</div>
-			<hr style="border: 5; margin: 0px;border-top: 1px solid #eee;"/>
-<!--             <div class="navbar-default sidebar" role="navigation" style="margin-top: 0px;"> -->
-<!--                 <div class="sidebar-nav navbar-collapse"> -->
-<!--                     <ul class="nav" id="side-menu"> -->
-
-<!--                         <li> -->
-<!--                             <a href="tables.html"><i class="fa fa-table fa-fw"></i> Symbol Check</a> -->
-<!--                         </li> -->
-<!--                         <li> -->
-<!--                             <a href="forms.html"><i class="fa fa-edit fa-fw"></i> ETFs</a> -->
-<!--                         </li> -->
-<!--                         <li> -->
-<!--                             <a href="tables.html"><i class="fa fa-table fa-fw"></i> Currencies</a> -->
-<!--                         </li> -->
-<!--                         <li> -->
-<!--                             <a href="trade_plan.jsp"><i class="fa fa-edit fa-fw"></i> Trade Plan</a> -->
-<!--                         </li> -->
-<!--                     </ul> -->
-<!--                 </div> -->
-<!--                 /.sidebar-collapse -->
-<!--             </div> -->
-            <!-- /.navbar-static-side -->
-
+			<hr style="border: 5; margin-top: 0px; border-top: 1px solid #eee;"/>
         <br/>
         <br/>
-        
-        <div id="page-wrapper" style="width: 100%; margin: -40px 0 0 0; height: auto;overflow: auto;">
+
+        <div id="page-wrapper" style="width: 100%; margin: -60px 0 0 0; height: auto;overflow: auto;">
             <div class="row">
-                <div class="col-lg-12" data-ng-show="showTable && finance != null">
-                    <h2>{{finance.companyName}}, {{finance.ticker}} ({{finance.stockPrice | currency}})</h2>
+                <div class="col-lg-12" data-ng-show="showTable && finance != null" style="padding-left: 0px;">
+                    <h3>{{finance.companyName}}, {{finance.ticker | uppercase}} ({{finance.stockPrice | currency}})</h3>
+<!--                  Button trigger modal -->
+<!--                  <button class="alert-link" data-toggle="modal" data-target="#myModal"> -->
+<!--                      View Chart -->
+<!--                  </button> -->
+
                     <h5>Industry - {{finance.industry}} , Sector - {{finance.sector}} </h5>
                     <h6 data-ng-show="showTable">52 Week Price Range : {{finance.perfData.tradingRange52Week}}</h6>
                     <h6 data-ng-show="showTable">Previous Close : {{finance.prevClose}}</h6>
@@ -133,17 +127,20 @@
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
-            
-            <img id="spinner" src="images/spinner.gif" class="spinner" style="display:none"></img>            
+            <div class="panel-body">
+            <img id="spinner" src="images/spinner.gif" class="spinner" style="display:none"></img>
+            <div class="errorText" data-ng-show="showError">
+            	{{ errorText }}
+            </div>
             <div style="float:left; width: 20%;" class="row" data-ng-show="showTable && finance != null">
                 <div>
-                    <div class="panel panel-info">
+                    <div class="panel panel-primary">
                         <div class="panel-heading">
                             General Data
                         </div>
                         <div class="panel-body">
 <!--                             <p>Ticker : {{ finance.ticker | uppercase}}</p> -->
-                            <p>ATR(N) : {{ finance.atr }}</p>
+                            <p style="color: red;">ATR(N) : {{ finance.atr }}</p>
                             <p>Short Float : {{ finance.shortFloat }} %</p>
                             <p>Target Price : {{ finance.targetPrice |currency}}</p>
                             <p>Earnings Call : {{ finance.earningsCall }}</p>
@@ -156,7 +153,7 @@
 <!--             </div> -->
 <!--             <div class="row" data-ng-show="showTable && finance != null"> -->
                 <div data-ng-show="showTable && finance.fundaData != null">
-                    <div class="panel panel-info">
+                    <div class="panel panel-primary">
                         <div class="panel-heading">
                             Fundamental Data
                         </div>
@@ -173,38 +170,33 @@
 <!-- 			</div> -->
 <!-- 			 <div class="row" data-ng-show="showTable && finance != null"> -->
                 <div>
-                    <div class="panel panel-info">
+                    <div class="panel panel-primary" data-ng-show="showTable">
                         <div class="panel-heading">
                             Performance Data
                         </div>
                         <div class="panel-body">
-                            <p data-ng-show="showTable">Weekly Performance(%) : {{finance.perfData.perfWeek}}
-                                <img data-ng-show="finance.perfData.perfWeek < 0" src="images/270px-Red_triangle.svg.png" title="Bearish" width="12" />
-                                <img data-ng-show="finance.perfData.perfWeek > 0" src="images/green-triangle.gif" title="Bullish" width="12" />
+                            <p>Weekly Performance(%) : {{finance.perfData.perfWeek}}
+                                <img data-ng-src="{{ finance.perfData.perfWeek < 0 ? 'images/270px-Red_triangle.svg.png' : 'images/green-triangle.gif'}}" width="12" />
                                 <a></a>
                             </p>
-                            <p data-ng-show="showTable">Monthly Performance(%) : {{finance.perfData.perfMonthly}}
-                                <img data-ng-show="finance.perfData.perfMonthly < 0" src="images/270px-Red_triangle.svg.png" title="Bearish" width="12" />
-                                <img data-ng-show="finance.perfData.perfMonthly > 0" src="images/green-triangle.gif" title="Bullish" width="12" />
+                            <p>Monthly Performance(%) : {{finance.perfData.perfMonthly}}
+                                <img data-ng-src="{{ finance.perfData.perfMonthly < 0 ? 'images/270px-Red_triangle.svg.png' : 'images/green-triangle.gif'}}" width="12" />
                             </p>
-                            <p data-ng-show="showTable">Quarterly Performance(%) : {{finance.perfData.perfQuarter}}
-                                <img data-ng-show="finance.perfData.perfQuarter < 0" src="images/270px-Red_triangle.svg.png" title="Bearish" width="12" />
-                                <img data-ng-show="finance.perfData.perfQuarter > 0" src="images/green-triangle.gif" title="Bullish" width="12" />
+                            <p>Quarterly Performance(%) : {{finance.perfData.perfQuarter}}
+                                <img data-ng-src="{{ finance.perfData.perfQuarter < 0 ? 'images/270px-Red_triangle.svg.png' : 'images/green-triangle.gif' }}" width="12" />
                             </p>
-                            <p data-ng-show="showTable">Yearly Performance(%) : {{finance.perfData.perfYear}}
-                                <img data-ng-show="finance.perfData.perfYear < 0" src="images/270px-Red_triangle.svg.png" title="Bearish" width="12" />
-                                <img data-ng-show="finance.perfData.perfYear > 0" src="images/green-triangle.gif" title="Bullish" width="12" />
+                            <p>Yearly Performance(%) : {{finance.perfData.perfYear}}
+                                <img data-ng-src="{{ finance.perfData.perfYear < 0 ? 'images/270px-Red_triangle.svg.png' : 'images/green-triangle.gif' }}" width="12" />
                             </p>
-                            <p data-ng-show="showTable">YTD Performance(%) : {{finance.perfData.perfYTD}}
-                                <img data-ng-show="finance.perfData.perfYTD < 0" src="images/270px-Red_triangle.svg.png" title="Bearish" width="12" />
-                                <img data-ng-show="finance.perfData.perfYTD > 0" src="images/green-triangle.gif" title="Bullish" width="12" />
-                            </p>                            
+                            <p>YTD Performance(%) : {{finance.perfData.perfYTD}}
+                                <img data-ng-src="{{ finance.perfData.perfYTD < 0 ? 'images/270px-Red_triangle.svg.png' : 'images/green-triangle.gif' }}" width="12" />
+                            </p>
                         </div>
                     </div>
                     <!-- /.col-lg-4 -->
                 </div>
                 <div data-ng-show="showTable && finance.divData != null">
-                    <div class="panel panel-info">
+                    <div class="panel panel-primary">
                         <div class="panel-heading">
                             Dividend Data
                         </div>
@@ -218,66 +210,74 @@
                     </div>
                     <!-- /.col-lg-4 -->
                 </div>
-                
+
              </div>
-             <div style="width:	70%; float: left;" data-ng-show="showTable && finance != null">
-                  <div class="panel panel-info" style="height: 300px; margin-left: 3%">
+             <div style="width:	40%; float: left; height: auto" data-ng-show="showTable && finance != null">
+                  <div class="panel panel-primary" style="margin-left: 3%">
                       <div class="panel-heading">
-                          Evaluate trades (The turtle way!)
+                          Plan Trades.
                       </div>
                       <div class="panel-body">
-                      	Enter your account size
-                      	<input type="text" data-ng-model="accountSize" data-ng-show="showTable"/><br/>
-                      	<select data-ng-model="accountSizeOption">
+                     	<div style="float:left; width:40%;">
+	                        <div style="float: left; border-color: white;" class="form-control " >Enter account size</div>
+	                        <div style="float: left;  border-color: white; clear:left" class="form-control " >% riskage per trade</div>
+	                        <div style="float: left; border-color: white; clear:left" class="form-control " >
+	                        	{{ accountSizeOption }} % of account size:
+	                        </div>
+	                        <div style="float: left; border-color: white; clear:left" class="form-control " >
+								No of shares to buy with {{ accountSizeOption }} % risk
+							</div>
+                        	<div style="float: left; border-color: white; clear:left" class="form-control " data-ng-show="finance.divData != null">
+								Receivable dividend (per year)
+                        	</div>
+                        </div>
+
+                        <div style="float: right; width:60%">
+                        	<div style="float: left"><input class="form-control " type="text" data-ng-model="accountSize" data-ng-show="showTable"/></div>
+                        	<div style="float: left; clear:left"><select class="form-control " data-ng-model="accountSizeOption">
 								<option value="2" selected="selected">2%</option>
 								<option value="3">3%</option>
 								<option value="5">5%</option>
 								<option value="10">10%</option>
 								<option value="20">20%</option>
-					</select>
-							<p>For {{accountSizeOption}} %, the amount of money from your total account that should be invested is :
-							{{accountSizeOption/100 * accountSize}}</p>
-							<br/>
-							<p>2N = {{ finance.atr * 2}}</p> 
-							<p>3N = {{ finance.atr * 3}}</p>
-							<p>5N = {{ finance.atr * 5}}</p>
-                      </div>
+								<option value="50">50%</option>
+								<option value="90">90%</option>
+                        		</select>
+                        	</div>
+                        	<div style="float: left; clear:left;  border-color: white; " class="form-control ">
+                        	<input type="text" style="display:none;" value="{{ accountSizeOption/100 * accountSize}}" data-ng-model="portionAccountSize"/>
+                        		{{ accountSizeOption/100 * accountSize | currency }}
+                        	</div>
+
+                        	<div style="float: left; clear:left; border-color: white; " class="form-control ">
+
+                        		{{ (accountSizeOption/100 * accountSize) / finance.stockPrice | number:0}}
+                        	</div>
+                        	<div style="float: left; clear:left; border-color: white; " class="form-control " data-ng-show="finance.divData != null">
+                        		{{ ((accountSizeOption/100 * accountSize ) / finance.stockPrice) * finance.divData.annualDividend  | currency}} &nbsp;&nbsp;&nbsp;
+                        		({{ finance.divData.divYield }} % of {{ (accountSizeOption/100 * accountSize ) }})
+                        	</div>
+                        </div>
+                        <a style="font-size:smaller" href="login.jsp" >Click to see more.</a>
+                      </div><br/>
+
                   </div>
-                  <div class="panel panel-info" style="height: 900px; margin-left: 3%">
-                      <div class="panel-heading">
-                          Chart for {{ finance.ticker | uppercase}} (Provided by Trading View)
-                      </div>
-                      <p style="display:none" id="hiddenTicker">{{ finance.ticker }} </p>
-                      <div id="tradingWidget" class="panel-body ng-cloak">
-						<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-						<script type="text/javascript"> 
- 							alert("abc test" + $("#test").text());
-							new TradingView.widget({
- 								"width": "100%",
- 								"height": 825,
- 								"symbol": angular.element(document.querySelector('[data-ng-controller="financeController"]')).scope().symbol,
- 								"interval": "D",
- 								"timezone": "exchange",
- 								"theme": "White",
- 								"style": "1",
- 								"toolbar_bg": "#f1f3f6",
- 								"withdateranges": true,
- 								"hide_side_toolbar": false,
- 								"allow_symbol_change": false,
- 								"save_image": true,
- 								"hideideas": true,
- 								"studies": [ "StochasticRSI@tv-basicstudies",
- 								"MASimple@tv-basicstudies" ],
- 								"show_popup_button": false
- 							});
- 						</script>
-				  	</div>                  
-             	</div>
+<!--                   <div class="panel panel-primary" style="height: 900px; margin-left: 3%"> -->
+<!--                       <div class="panel-heading"> -->
+<!--                           Chart for {{ finance.ticker | uppercase}} (Provided by Trading View) -->
+<!--                       </div> -->
+<!--                       <p style="display:none" id="hiddenTicker">{{ finance.ticker }} </p> -->
+<!--                       <div id="tradingWidget" class="panel-body"> -->
+<!-- <!-- 						<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script> -->
+<!-- 						<script type="text/javascript">  -->
+<!--   						</script> -->
+<!-- 				  	 </div>                   -->
+<!--              	</div> -->
              </div>
-<!--              <div > -->
-             <div style="width:	10%; margin-left: 1%; float: left;" class="panel panel-info" data-ng-show="showTable">
+             <div >
+             <div style="width:	10%; margin-left: 1%; float: left;" class="panel panel-primary" data-ng-show="showTable">
                 <div class="panel-heading">
-                    Watchlists
+                   Watchlists
                 </div>
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
@@ -285,10 +285,10 @@
                               <a href="#">Dow 30 <span class="fa arrow"></span></a>
                               <ul class="nav nav-third-level">
                                   <li>
-                                  	<a style="text-decoration: none !important; clear:left;float: left; cursor: pointer" data-ng-repeat="x in dow30List" id="dow30_{{x}}" 
+                                  	<a style="text-decoration: none !important; clear:left;float: left; cursor: pointer; font-size: smaller;" data-ng-repeat="x in dow30List" id="dow30_{{x}}"
        								 target="_blank" data-placement="left" title="{{x}}" data-ng-click="getStockData('{{ x }}')">
 										{{ x }}
-        						</a>
+        							</a>
                                   </li>
                               </ul>
                           </li>
@@ -296,26 +296,17 @@
                               <a href="#">SPX 100<span class="fa arrow"></span></a>
                               <ul class="nav nav-third-level">
                                   <li>
-                                      <a style="text-decoration: none !important; clear:left;float: left; cursor: pointer" data-ng-repeat="x in spx100List" id="spx100_{{x}}" 
+                                    <a style="text-decoration: none !important; clear:left;float: left; cursor: pointer; font-size: smaller;" data-ng-repeat="x in spx100List" id="spx100_{{x}}"
       						    target="_blank" data-placement="left" title="{{ x | uppercase }}" data-ng-click="getStockData('{{ x }}')">
 										{{ x }}
-        						</a>
+        							</a>
                                   </li>
                               </ul>
                           </li>
                       </ul>
-                 </div>       
-                <div class="panel-body">
-<!-- 	                <a style="text-decoration: none !important; clear:left;float: left; cursor: pointer" data-ng-repeat="x in dow30List" id="dow30_{{x}}"  -->
-<!-- 		            target="_blank" data-placement="left" title="{{x}}" data-ng-click="getStockData('{{ x }}')"> -->
-<!-- 						{{ x }} -->
-<!-- 		            </a> -->
-<!-- 		            <a style="text-decoration: none !important; clear:left;float: left; cursor: pointer" data-ng-repeat="x in spx100List" id="spx100_{{x}}"  -->
-<!-- 		            target="_blank" data-placement="left" title="{{ x | uppercase }}" data-ng-click="getStockData('{{ x }}')"> -->
-<!-- 						{{ x }} -->
-<!-- 		            </a> -->
-                </div>
+                 </div>
 	         </div>
             </div>
+        </div>
         </div>
 </body>

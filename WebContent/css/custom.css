@@ -5,12 +5,34 @@
 	
 }
 
+.marketIndexRed {    
+    text-decoration: none !important;
+    color: #e04949;
+/*     padding: 20px 5px 20px 5px; */
+/*     border: 0px solid #e04949; */
+/*     color: white; */
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.marketIndexGreen {
+	text-decoration: none !important;
+    color: #6ec774;
+/*     padding: 20px 5px 20px 5px; */
+/*     border: 0px solid #6ec774; */
+/*     color: white; */
+    cursor: pointer;
+    border-radius: 10px;
+}
+
 .indexStrip {
-	padding: 10px 15px; font-size: small;
+	padding: 10px 15px; 
+	font-size: small;
+	background-color: white;
 }
 
 .clockLabel {
-	float:left; clear: left; padding: 0px 0px 5px 15px;
+	float:left; clear: left; padding: 0px 0px 5px 15px; font-size: 11px;
 }
 
 .indexStrip > span {
@@ -18,7 +40,7 @@
 }
 .indexStrip > a {
 	font-size: 18px;
-	padding-right: 50px;
+	margin-right: 50px;
 }
 
 .spinner {
@@ -28,3 +50,40 @@
 	margin-top: -50px;
 	margin-left: -100px;
 }
+
+.textBoxWidth {
+	width: 100px;
+}
+
+.errorText {
+	text-align: center;
+	color: red;
+	margin-top: 10%;
+}
+
+.autoCompleteSuggestionsTable {
+	border: 1px solid #ccc;
+    border-radius: 4px;
+	background: #fff;
+    color: #000;
+    font-size: 11px;
+    position: absolute;
+    top: 41px;
+    right: 0%;
+    width: 100%;
+    z-index: 10;
+    -webkit-box-shadow: 0 0 6px 0 rgba(0,0,0,0.3);
+    -moz-box-shadow: 0 0 6px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 0 6px 0 rgba(0,0,0,0.3);
+    cursor: pointer;
+}
+
+.titleFont {
+	font-size: 30px;
+}
+/*     background-color: #dc172a; */
+/*     color: #fff; */
+/*     height: 40px; */
+/*     line-height: 40px; */
+/*     padding: 0 4px; */
+/*     cursor: pointer; */

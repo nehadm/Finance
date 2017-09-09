@@ -1,21 +1,25 @@
+
 var app = angular.module('myApp', [])
 
 app.factory('factoryReference', ['$http', '$q', function($http, $q) {
 
 	var dataFactory = {};
-    dataFactory.getAllStockList = function(cb) {
-            $http.post('autoCompleteServlet').success(cb);
+    dataFactory.getAllStockList = function() {
+            //$http.post('autoCompleteServlet').success(cb);
+    	var allStocksList = $http.get('resources/stockList.json');
+    	return allStocksList;
+
     };
     dataFactory.getStockData = function(tckr) {
     		console.log(tckr);
         	var data = $http({
     			method: 'POST',
-    			url: 'javaAngularJS',
+    			url: 'rest/financeService/finDataSymbol',
     			data: {ticker : tckr}
     		});
 			return data;
     };
-    
+
     dataFactory.getMarketIndices = function() {
     	var marketData = $http({
 			method: 'POST',
@@ -51,9 +55,24 @@ app.controller("financeController", ['$scope', '$http', '$timeout', 'factoryRefe
     	$('#tableAutoComplete').show();
     }
     $('#buttonSearch').click(function (){
-    	console.log('button clicked');
-    	console.log($scope.selected);
-    	$scope.getStockData($scope.selected);
+    	console.log('button clicked' + $('#tickerInput').val());
+    	var ticker = $('#tickerInput').val();
+    	console.log(ticker + "ticker is:");
+//    	if(!ticker.match("[a-zA-Z]*")) {
+//    		console.log("ticker symbol does not match");
+//    	}
+    	var matches = ticker.match(/^[a-zA-Z ]*$/);
+    	if (matches == null) {
+    		//alert("ticker symbol cannot contain special characters or numbers");
+    		$('.spinner').hide();
+    		$scope.showTable = false;
+    		$scope.showError = true;
+    		$scope.errorText = "Symbol does not exist. Please enter a valid stock symbol.";
+
+    	} else {
+    		$scope.getStockData(ticker);
+        	$('#hiddenTicker').val(ticker);
+    	}
     });
 
     $('#tickerSelected').hide();
@@ -61,19 +80,41 @@ app.controller("financeController", ['$scope', '$http', '$timeout', 'factoryRefe
     	console.log('key pressed');
     	$('#tickerSelected').show();
     });
-    
+
     var clock = function(){
-    	$scope.date = new Date();
+    	var optionsLocal = {
+		    weekday: "long", year: 'numeric', month: 'long', day: 'numeric',
+		    hour: 'numeric', minute: 'numeric'//, second: 'numeric',
+    	};
+
+    	var formatterLocal = new Intl.DateTimeFormat([], optionsLocal);
+    	$scope.dateLocal = formatterLocal.format(new Date());
+
+    	//for firefox : remove the undefined.: instead of using another js library.
+    	$scope.dateLocal = $scope.dateLocal.replace('undefined','');
+
+    	var optionsNY = {
+    		    timeZone: 'America/New_York', timeZoneName: 'short',
+    		    weekday: "short", year: 'numeric', month: 'long', day: 'numeric',
+    		    hour: 'numeric', minute: 'numeric'//, second: 'numeric',
+    		};
+
+    	formatterNY = new Intl.DateTimeFormat([], optionsNY);
+    	$scope.dateNY = formatterNY.format(new Date());
+    	//console.log(($scope.dateLocal));
+    	//console.log(($scope.dateNY));
     	$timeout(clock, 1000);
     }
     $timeout(clock, 1000);
-    factoryReference.getAllStockList(function (response) {
-   		console.log(response);
-   		var res =angular.fromJson(response.finData);
-        $scope.stockList = res;
+    factoryReference.getAllStockList().then(function (result) {
+   		console.log(result);
+   		//var res =angular.fromJson(response.finData);
+        $scope.stockList = result.data.finData;
 
+     }, function(result){
+    	 console.log("getAllStockList():error");
      });
-    
+
     factoryReference.getMarketIndices().then(function (result) {
     	console.log(result.data);
     	console.log("getMarketIndices()");
@@ -82,7 +123,7 @@ app.controller("financeController", ['$scope', '$http', '$timeout', 'factoryRefe
     }, function(result){
     	console.log("getMarketIndices():error");
     });
-    
+
     factoryReference.getDowWatchlist().then(function(result){
     	console.log("getDowWatchList()");
     	$scope.dow30List = result.data.dow30;
@@ -94,16 +135,32 @@ app.controller("financeController", ['$scope', '$http', '$timeout', 'factoryRefe
     });
 
     $scope.getStockData = function(tckr) {
-    	$('#spinner').show();
+    	$('.spinner').show();
     	$scope.showTable = false;
-    	$scope.selected = tckr.replace(/[\s]/g, '');
+    	$('.autoCompleteSuggestionsTable').hide();
+    	if(tckr != undefined) {
+    		$scope.selected = tckr.replace(/[\s]/g, '');
+    	}
     	factoryReference.getStockData(tckr.replace(/[\s]/g, '')).then(function(result) {
     		console.log("getStockData.success()");
     		console.log(result);
     		$scope.finance = result.data;
     		$scope.symbol = $scope.finance.ticker;
-    		$scope.showTable = true;
-    		$('#spinner').hide();
+    		$('.spinner').hide();
+    		if($scope.finance == "null"){
+    			$scope.showTable = false;
+        		$scope.errorText = "Symbol does not exist. Please enter a valid stock symbol.";
+    		} else {
+        		$scope.showTable = true;
+        		$scope.showError = false;
+        		$("#hiddenTicker").val($scope.finance.ticker);
+//        		var scriptTagArrs = $("#modalDiv").find("script" );
+//        		for (var n = 0; n < scriptTagArrs.length; n++)
+//        		    eval(scriptTagArrs[n].innerHTML)//run script inside div
+
+        		$('.spinner').hide();
+        		$('#tickerInput').val('');
+    		}
         }, function(result) {
         	console.log("getStockData.error()");
     		$scope.showTable = false;

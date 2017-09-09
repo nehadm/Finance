@@ -1,7 +1,9 @@
-package com.data;
+package com.tradeanalyzer.main.dao;
 
-import java.util.Date;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement(name = "divData")
 public class DividendData {
 
 	private String exDivDate;
@@ -9,40 +11,51 @@ public class DividendData {
 	private Double divYield;
 	private Double annualDividend;
 	private int yearsPaying;
-	
-	public DividendData(){
-		
+
+	public DividendData() {
+
 	}
-	
-	public DividendData(String exDivDate, String payDate, Double divYield, Double annualDividend, int yearsPaying){
+
+	public DividendData(String exDivDate, String payDate, Double divYield, Double annualDividend, int yearsPaying) {
 		this.exDivDate = exDivDate;
 		this.payDate = payDate;
 		this.divYield = divYield;
 		this.annualDividend = annualDividend;
 		this.yearsPaying = yearsPaying;
 	}
-	
+
 	public String getExDivDate() {
 		return exDivDate;
 	}
+
+	@XmlElement
 	public void setExDivDate(String exDivDate) {
 		this.exDivDate = exDivDate;
 	}
+
 	public String getPayDate() {
 		return payDate;
 	}
+
+	@XmlElement
 	public void setPayDate(String payDate) {
 		this.payDate = payDate;
 	}
+
 	public Double getDivYield() {
 		return divYield;
 	}
+
+	@XmlElement
 	public void setDivYield(Double divYield) {
 		this.divYield = divYield;
 	}
+
 	public Double getAnnualDividend() {
 		return annualDividend;
 	}
+
+	@XmlElement
 	public void setAnnualDividend(Double annualDividend) {
 		this.annualDividend = annualDividend;
 	}
@@ -51,12 +64,14 @@ public class DividendData {
 		return yearsPaying;
 	}
 
+	@XmlElement
 	public void setYearsPaying(int yearsPaying) {
 		this.yearsPaying = yearsPaying;
 	}
 
 	public String toString() {
-		return exDivDate.toString()+" | "+payDate.toString()+" | "+divYield.toString()+" | "+annualDividend.toString()+ " | "+yearsPaying;
+		return exDivDate.toString() + " | " + payDate.toString() + " | " + divYield.toString() + " | "
+				+ annualDividend.toString() + " | " + yearsPaying;
 	}
-	
+
 }

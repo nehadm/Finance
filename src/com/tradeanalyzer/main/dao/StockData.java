@@ -1,5 +1,12 @@
-package com.data;
+package com.tradeanalyzer.main.dao;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@XmlRootElement(name = "stockData")
 public class StockData {
 
 	private Double atr;
@@ -7,32 +14,36 @@ public class StockData {
 	private Double prevClose;
 	private Double shortFloat;
 	private String ticker;
-	private Double dividend=0.0;
+	private Double dividend = 0.0;
 	private String companyName;
 	private String companyBriefing;
 	private String industry;
 	private String sector;
 	private Double targetPrice;
 	private String stockExchange;
-	private DividendData divData;	
+	private DividendData divData;
 	private String earningsCall;
 	private String earningsStats;
 	private FundamentalData fundaData;
 	private PerformanceData perfData;
-	
+
 	public StockData() {
 	}
 
+	@JsonCreator
 	public StockData(String companyName, String ticker) {
 		super();
 		this.companyName = companyName;
 		this.ticker = ticker;
 	}
 
-	public StockData(Double atr, Double stockPrice, Double prevClose, Double shortFloat, String ticker, Double dividend,
-			String companyName, String companyBriefing, String industry, String sector, Double targetPrice,
-			String stockExchange, DividendData divData, String earningsCall, String earningsStats,
-			FundamentalData fundaData, PerformanceData perfData) {
+	@JsonCreator
+	public StockData(@JsonProperty Double atr, @JsonProperty Double stockPrice, @JsonProperty Double prevClose,
+			@JsonProperty Double shortFloat, @JsonProperty String ticker, Double dividend, String companyName,
+			@JsonProperty String companyBriefing, @JsonProperty String industry, @JsonProperty String sector,
+			@JsonProperty Double targetPrice, @JsonProperty String stockExchange, @JsonProperty DividendData divData,
+			@JsonProperty String earningsCall, @JsonProperty String earningsStats,
+			@JsonProperty FundamentalData fundaData, @JsonProperty PerformanceData perfData) {
 		super();
 		this.atr = atr;
 		this.stockPrice = stockPrice;
@@ -53,11 +64,11 @@ public class StockData {
 		this.perfData = perfData;
 	}
 
-
 	public Double getAtr() {
 		return atr;
 	}
 
+	@XmlElement
 	public void setAtr(Double atr) {
 		this.atr = atr;
 	}
@@ -66,6 +77,7 @@ public class StockData {
 		return stockPrice;
 	}
 
+	@XmlElement
 	public void setStockPrice(Double stockPrice) {
 		this.stockPrice = stockPrice;
 	}
@@ -74,6 +86,7 @@ public class StockData {
 		return prevClose;
 	}
 
+	@XmlElement
 	public void setPrevClose(Double prevClose) {
 		this.prevClose = prevClose;
 	}
@@ -82,6 +95,7 @@ public class StockData {
 		return shortFloat;
 	}
 
+	@XmlElement
 	public void setShortFloat(Double shortFloat) {
 		this.shortFloat = shortFloat;
 	}
@@ -90,6 +104,7 @@ public class StockData {
 		return ticker;
 	}
 
+	@XmlElement
 	public void setTicker(String ticker) {
 		this.ticker = ticker;
 	}
@@ -98,22 +113,25 @@ public class StockData {
 		return dividend;
 	}
 
+	@XmlElement
 	public void setDividend(Double dividend) {
 		this.dividend = dividend;
 	}
-	
+
 	public String getCompanyName() {
 		return companyName;
 	}
 
+	@XmlElement
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
 	}
-	
+
 	public String getCompanyBriefing() {
 		return companyBriefing;
 	}
 
+	@XmlElement
 	public void setCompanyBriefing(String companyBriefing) {
 		this.companyBriefing = companyBriefing;
 	}
@@ -122,6 +140,7 @@ public class StockData {
 		return industry;
 	}
 
+	@XmlElement
 	public void setIndustry(String industry) {
 		this.industry = industry;
 	}
@@ -130,6 +149,7 @@ public class StockData {
 		return sector;
 	}
 
+	@XmlElement
 	public void setSector(String sector) {
 		this.sector = sector;
 	}
@@ -138,6 +158,7 @@ public class StockData {
 		return targetPrice;
 	}
 
+	@XmlElement
 	public void setTargetPrice(Double targetPrice) {
 		this.targetPrice = targetPrice;
 	}
@@ -146,22 +167,25 @@ public class StockData {
 		return divData;
 	}
 
+	@XmlElement
 	public void setDivData(DividendData divData) {
 		this.divData = divData;
 	}
-	
+
 	public String getEarningsCall() {
 		return earningsCall;
 	}
 
+	@XmlElement
 	public void setEarningsCall(String earningsCall) {
 		this.earningsCall = earningsCall;
 	}
-	
+
 	public String getStockExchange() {
 		return stockExchange;
 	}
 
+	@XmlElement
 	public void setStockExchange(String stockExchange) {
 		this.stockExchange = stockExchange;
 	}
@@ -170,6 +194,7 @@ public class StockData {
 		return earningsStats;
 	}
 
+	@XmlElement
 	public void setEarningsStats(String earningsStats) {
 		this.earningsStats = earningsStats;
 	}
@@ -178,26 +203,26 @@ public class StockData {
 		return fundaData;
 	}
 
+	@XmlElement
 	public void setFundaData(FundamentalData fundaData) {
 		this.fundaData = fundaData;
 	}
-	
+
 	public PerformanceData getPerfData() {
 		return perfData;
 	}
 
+	@XmlElement
 	public void setPerfData(PerformanceData perfData) {
 		this.perfData = perfData;
 	}
 
 	public String toString() {
-		
-		return ticker+" | "
-		+atr.toString()+" | "
-		+shortFloat == null? "" : shortFloat.toString()+" | "
-		+dividend == null ? "" : dividend.toString()+" | "
-		+companyName.toString()+" | "
-		+targetPrice == null ? "" : targetPrice.toString()+" | ";
-		
+
+		return ticker + " | " + atr.toString() + " | " + shortFloat == null ? ""
+				: shortFloat.toString() + " | " + dividend == null ? ""
+						: dividend.toString() + " | " + companyName.toString() + " | " + targetPrice == null ? ""
+								: targetPrice.toString() + " | ";
+
 	}
 }

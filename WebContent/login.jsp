@@ -52,23 +52,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="help_doc.html">Stock Analyzer</a>
-            <ul class="nav navbar-top-links navbar-right">
-                    <div class="input-group custom-search-form" style="float:right; width: 500px; margin-left: 940px;padding-top: 7px;">
-                    <input type="text" class="form-control" placeholder="Search..." id="tickerInput" data-ng-model="selected" data-ng-pattern="regex" required="" data-ng-minlength="1" data-ng-maxlength="5">
-                    <span class="input-group-btn">
-                        	<button class="btn btn-default" type="button" id="buttonSearch">
-                        		<i class="fa fa-search"></i>
-                    		</button>
-                	</span>
-                    <select id="tickerSelected" class="form-control" data-ng-model="eg" data-ng-change="getStockData(eg.split('-')[0])">
-                        <option data-ng-repeat="x in stockList | filter: selected">
-                            {{ x }}
-                        </option>
-                    </select>
-
                 </div>
-            </ul>
-		</div>
 		</nav>
 
     <div class="container">
@@ -96,6 +80,12 @@
                                 <a href="index.html" class="btn btn-lg btn-success btn-block">Login</a>
                             </fieldset>
                         </form>
+                    </div>
+                    <div>
+                    <div class="panel-heading">
+                    	<h3 class="panel-title">Don't have an account? </h3>
+                    	<a href="signup.jsp" class="btn btn-lg btn-success btn-block">Sign up</a>
+                    </div>
                     </div>
                 </div>
             </div>
