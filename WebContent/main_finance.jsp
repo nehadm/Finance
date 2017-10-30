@@ -140,7 +140,7 @@
                         </div>
                         <div class="panel-body">
 <!--                             <p>Ticker : {{ finance.ticker | uppercase}}</p> -->
-                            <p style="color: red;">ATR(N) : {{ finance.atr }}</p>
+                            <p style="color: red;">ATR(N):{{ finance.atr }}</p>
                             <p>Short Float : {{ finance.shortFloat }} %</p>
                             <p>Target Price : {{ finance.targetPrice |currency}}</p>
                             <p>Earnings Call : {{ finance.earningsCall }}</p>
